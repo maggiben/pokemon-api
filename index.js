@@ -1,11 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const passport = require('passport');
 const Strategy = require('passport-http-bearer').Strategy;
 const db = require('./db');
 const { request } = require('http');
 
-const port = 3000;
+const port = 8080;
 
 passport.use(new Strategy((token, callback) => {
   db.users.findByToken(token, (error, user) => {
@@ -21,6 +22,7 @@ passport.use(new Strategy((token, callback) => {
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -34,22 +36,24 @@ app.get('/users', (request, response) => {
 });
 
 app.post('/login', (request, response) => {
-  const token = db.users.loginUser(request.body);
-  if (token) {
+  const user = db.users.loginUser(request.body);
+  if (user) {
     return response.json({
-      bearer: token
+      username: user.username,
+      email: user.email,
+      token: user.token
     });
   }
-  return response.status(401).json({error: 'invalid email or password'});
+  return response.status(401).json({ error: 'invalid email or password' });
 });
 
 app.post('/signup', (request, response) => {
   const user = db.users.newUser(request.body);
   if (user) {
     const pokedex = db.pokedex.addPokedexRecord(user);
-    return response.json(Boolean(user && pokedex));
+    return response.json(user);
   }
-  return response.status(401).json({error: 'cannot create user'});
+  return response.status(401).json({ error: 'cannot create user' });
 });
 
 app.get('/pokemons_records', (request, response) => {
@@ -57,7 +61,7 @@ app.get('/pokemons_records', (request, response) => {
   return response.json(records);
 });
 
-app.get('/pokemons', passport.authenticate('bearer', { session: false }), (request, response) => {
+app.get('/pokemons', (request, response) => {
   const pokemons = db.pokedex.getPokemons();
   return response.json(pokemons);
 });

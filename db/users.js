@@ -48,7 +48,7 @@ exports.loginUser = ({username, password}) => {
   }
   const { salt, token } = user;
   if (validPassword(password, salt, token)) {
-    return token;
+    return user;
   }
 };
 
