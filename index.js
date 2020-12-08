@@ -70,6 +70,11 @@ app.get('/pokemons', (request, response) => {
   return response.json(pokemons);
 });
 
+app.get('/gettypes', (request, response) => {
+  const types = db.pokedex.getTypes();
+  return response.json(types);
+});
+
 app.get('/pokedex', passport.authenticate('bearer', { session: false }), (request, response) => {
   const { user } = request;
   const pokemons = db.pokedex.getPokedex(user);

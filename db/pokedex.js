@@ -25,9 +25,16 @@ exports.addPokedexRecord = (user) => {
   return undefined;
 };
 
+exports.getTypes = () => {
+  return pokemons
+    .map(({type}) => type)
+    .flat()
+    .filter((type, index, array) => !array.includes(type, index+1));
+};
+
 exports.getRecords = () => {
   return records;
-}
+};
 
 exports.addPokedexPokemon = (id, user) => {
   const { pokedex } = records[user.id];
