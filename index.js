@@ -27,13 +27,16 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.get('/', passport.authenticate('bearer', { session: false }), (request, response) => {
-  return response.json(pokedex);
-});
 
-app.get('/users', (request, response) => {
-  return response.json(db.users.getUsers());
-});
+// Helper functions very insecure 
+
+// app.get('/users', (request, response) => {
+//   return response.json(db.users.getUsers());
+// });
+// app.get('/pokemons_records', (request, response) => {
+//   const records = db.pokedex.getRecords();
+//   return response.json(records);
+// });
 
 app.post('/login', (request, response) => {
   const user = db.users.loginUser(request.body);
@@ -41,6 +44,7 @@ app.post('/login', (request, response) => {
     return response.json({
       username: user.username,
       email: user.email,
+      language: user.language,
       token: user.token
     });
   }
@@ -56,9 +60,9 @@ app.post('/signup', (request, response) => {
   return response.status(401).json({ error: 'cannot create user' });
 });
 
-app.get('/pokemons_records', (request, response) => {
-  const records = db.pokedex.getRecords();
-  return response.json(records);
+app.post('/setlanguage', passport.authenticate('bearer', { session: false }), (request, response) => {
+  const language = db.users.setUserLanguage(request.user, request.body.language);
+  return response.json(language);
 });
 
 app.get('/pokemons', (request, response) => {
