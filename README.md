@@ -1,11 +1,17 @@
 # pokemon-api
 The pokemon api
 
+## Installation
+
+### `npm install`
+
+This project was built and tested with `node v14.15.1`
+
 ## Available Scripts
 
 In the project directory, you can run:
 
-### `npm start`
+### `npm run start`
 
 Runs the API in the development mode.\
 Open [http://localhost:8080](http://localhost:8080) to view it in the api browser ie Postman.
